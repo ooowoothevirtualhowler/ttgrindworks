@@ -343,10 +343,16 @@ func dig() -> void:
 	if success:
 		# Create the chest
 		chest = load(TREASURE_CHEST).instantiate()
+		# These cases allow this to work when placing
+		# a doodle in a standalone test scene.
 		if is_instance_valid(Util.floor_manager):
-			Util.floor_manager.get_current_room().add_child(chest)
+			var current_room := Util.floor_manager.get_current_room()
+			if is_instance_valid(current_room):
+				current_room.add_child(chest)
 		elif is_instance_valid(SceneLoader.current_scene):
 			SceneLoader.current_scene.add_child(chest)
+		else:
+			get_parent().add_child(chest)
 		chest.hide()
 		chest.global_rotation_degrees.y = doodle.global_rotation_degrees.y - 180.0
 		chest.global_position = hole_placement.global_position

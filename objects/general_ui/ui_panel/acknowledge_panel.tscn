@@ -57,6 +57,8 @@ dead forever :("
 
 [node name="CancelButton" parent="Panel" index="2"]
 visible = false
+hover_db_offset = 6.0
+press_db_offset = 0.0
 
 [node name="GeneralButton" parent="Panel" index="3" instance=ExtResource("2_lka8o")]
 material = SubResource("ShaderMaterial_3ujb1")
@@ -76,6 +78,8 @@ texture_normal = ExtResource("4_shvpx")
 texture_pressed = ExtResource("5_soyab")
 texture_hover = ExtResource("6_ish85")
 texture_disabled = ExtResource("5_soyab")
+hover_db_offset = 6.0
+press_db_offset = 0.0
 text = "Okay"
 
 [node name="Label" parent="Panel/GeneralButton" index="0"]

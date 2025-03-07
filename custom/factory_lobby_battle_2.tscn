@@ -1,0 +1,113 @@
+[gd_scene load_steps=14 format=3 uid="uid://b3h5tnw5slhy8"]
+
+[ext_resource type="PackedScene" uid="uid://dmapsp85ra1fb" path="res://objects/modules/factory/base_rooms/factory_lobby.tscn" id="1_t2qni"]
+[ext_resource type="PackedScene" uid="uid://p33fqws4qewy" path="res://objects/obstacles/conveyer_belt/conveyer_belt.tscn" id="3_x6mwn"]
+[ext_resource type="Texture2D" uid="uid://bj0ye0oxq1fea" path="res://models/props/facility_objects/conveyor_platform/platform_CVBelt1.png" id="4_yrm45"]
+[ext_resource type="PackedScene" uid="uid://dxyq5lb5oineo" path="res://objects/interactables/treasure_chest/treasure_chest.tscn" id="6_aqlik"]
+[ext_resource type="PackedScene" uid="uid://cqg370amrv5o1" path="res://objects/props/factory/railing.tscn" id="7_fn6dv"]
+[ext_resource type="PackedScene" uid="uid://direah3lbjuu5" path="res://objects/battle/battle_node/battle_node.tscn" id="7_ltnpc"]
+[ext_resource type="PackedScene" uid="uid://dflwjcy6fj0av" path="res://objects/cog/cog.tscn" id="8_aac23"]
+[ext_resource type="PackedScene" uid="uid://dunq1mgh6t4kc" path="res://objects/interactables/chq_door/chq_door.tscn" id="9_aac23"]
+[ext_resource type="PackedScene" uid="uid://dbrst2twjd0pu" path="res://objects/interactables/button/button.tscn" id="10_ulwlc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_60xev"]
+resource_name = "ConveyerBeltV3SHD"
+cull_mode = 2
+albedo_texture = ExtResource("4_yrm45")
+roughness = 0.552786
+uv1_scale = Vector3(1, 3, 1)
+uv1_offset = Vector3(0, 0.611111, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x7sbv"]
+resource_name = "ConveyerBeltV3SHD"
+cull_mode = 2
+albedo_texture = ExtResource("4_yrm45")
+roughness = 0.552786
+uv1_scale = Vector3(1, 3, 1)
+uv1_offset = Vector3(0, -1.16667, 0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yrm45"]
+size = Vector3(10.093, 9.67816, 1.0321)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ulwlc"]
+size = Vector3(15.3067, 13.5142, 12.6715)
+
+[node name="FactoryLobby" type="Node3D"]
+
+[node name="factory_lobby" parent="." instance=ExtResource("1_t2qni")]
+
+[node name="CB1" parent="." instance=ExtResource("3_x6mwn")]
+transform = Transform3D(1, 0, 0, 0, 0.734097, -0.679044, 0, 0.679044, 0.734097, 6.92943, 3.11481, -34.3946)
+constant_linear_velocity = Vector3(0, 0, -5)
+size = Vector3(1, 1, 3)
+platform_mat = SubResource("StandardMaterial3D_60xev")
+speed = -5.0
+
+[node name="CB2" parent="." instance=ExtResource("3_x6mwn")]
+transform = Transform3D(-1, 5.93986e-08, 6.41447e-08, 0, 0.73373, -0.679441, -8.74228e-08, -0.679441, -0.73373, 6.92943, 3.11481, -41.1183)
+constant_linear_velocity = Vector3(7.54979e-07, 0, -5)
+size = Vector3(1, 1, 3)
+platform_mat = SubResource("StandardMaterial3D_x7sbv")
+speed = 5.0
+
+[node name="Wall1" type="StaticBody3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9.00478, 0, -38.1995)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.19492, 4.33908, 0.0160522)
+shape = SubResource("BoxShape3D_yrm45")
+
+[node name="Wall2" type="StaticBody3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.8716, 0, -38.1995)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.19492, 4.33908, 0.0160522)
+shape = SubResource("BoxShape3D_yrm45")
+
+[node name="treasure_chest" parent="." instance=ExtResource("6_aqlik")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 6.94208, 0, -37.0119)
+
+[node name="treasure_chest2" parent="." instance=ExtResource("6_aqlik")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -8.24494, 0, -49.1008)
+
+[node name="Railing1" parent="." instance=ExtResource("7_fn6dv")]
+transform = Transform3D(0.623123, 0, 0, 0, 1, 0, 0, 0, 1, -2.2389, 0, -36.8058)
+
+[node name="Railing2" parent="." instance=ExtResource("7_fn6dv")]
+transform = Transform3D(0.623123, 0, 0, 0, 1, 0, 0, 0, 1, 16.5402, 0, -36.8058)
+
+[node name="BattleNode" parent="." node_paths=PackedStringArray("cogs") instance=ExtResource("7_ltnpc")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 15.4167, 0, -45.0166)
+cogs = [NodePath("Cog"), NodePath("Cog2")]
+
+[node name="Cog" parent="BattleNode" instance=ExtResource("8_aac23")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+
+[node name="Cog2" parent="BattleNode" instance=ExtResource("8_aac23")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BattleNode"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.672306, 6.25708, -0.233031)
+shape = SubResource("BoxShape3D_ulwlc")
+
+[node name="BattleNode2" parent="." node_paths=PackedStringArray("cogs") instance=ExtResource("7_ltnpc")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.67004, 0, -45.6467)
+cogs = [NodePath("Cog"), NodePath("Cog2"), NodePath("Cog3")]
+
+[node name="Cog" parent="BattleNode2" instance=ExtResource("8_aac23")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+
+[node name="Cog2" parent="BattleNode2" instance=ExtResource("8_aac23")]
+
+[node name="Cog3" parent="BattleNode2" instance=ExtResource("8_aac23")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BattleNode2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.445389, 6.25708, 0.747451)
+shape = SubResource("BoxShape3D_ulwlc")
+
+[node name="CogDoor" parent="." instance=ExtResource("9_aac23")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8993, 0, -59.5905)
+
+[node name="CogButton" parent="." node_paths=PackedStringArray("connected_objects") instance=ExtResource("10_ulwlc")]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 19.4959, 0, -44.9725)
+connected_objects = [NodePath("../CogDoor")]

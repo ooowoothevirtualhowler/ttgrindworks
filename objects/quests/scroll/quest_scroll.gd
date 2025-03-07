@@ -24,10 +24,9 @@ signal s_quest_rerolled
 
 @export var quest : Quest:
 	set(x):
-		if quest:
+		if quest and quest.s_quest_updated.is_connected(update_quest):
 			quest.s_quest_updated.disconnect(update_quest)
 		quest = x
-		#quest.s_quest_updated.connect(update_quest)
 		update_quest()
 
 func update_quest() -> void:

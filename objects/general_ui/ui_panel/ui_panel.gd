@@ -46,7 +46,7 @@ func close() -> void:
 		animator.play('pop_out')
 		await animator.animation_finished
 	
-	if click_buffer: 
+	if click_buffer:
 		click_buffer.queue_free()
 	
 	s_closed.emit()

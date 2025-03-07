@@ -19,7 +19,7 @@ var floor_manager : GameFloor:
 		# Mirror the game floor's end signal with a globally accessible version
 		# And null out the reference once the floor ends
 		x.s_floor_ended.connect(
-		func(): 
+		func():
 			s_floor_ended.emit()
 			floor_manager = null
 		)
