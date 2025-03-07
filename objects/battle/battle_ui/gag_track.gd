@@ -69,19 +69,27 @@ func refresh():
 			var price := 0
 			if not button.pressed.is_connected(emit_gag):
 				price = i
-				price -= BattleService.ongoing_battle.battle_stats[Util.get_player()].gag_discount
-				button.mouse_entered.connect(ui_root.gag_hovered.bind(gag))
+				if ui_root.is_in_battle():
+					price -= BattleService.ongoing_battle.battle_stats[Util.get_player()].gag_discount
+				var hover_callback := ui_root.gag_hovered.bind(gag)
+				if not button.mouse_entered.is_connected(hover_callback):
+					button.mouse_entered.connect(hover_callback)
 				button.set_count(price)
-				button.pressed.connect(emit_gag.bind(gag,price))
+				
+				if ui_root.is_in_battle():
+					button.pressed.connect(emit_gag.bind(gag,price))
 			
-			if Util.get_player().stats.gag_balance[track.track_name] < price:
-				button.disable()
-			elif (gag is GagLure) and all_cogs_lured():
-				button.disable()
-			elif (gag is GagTrap) and ((all_cogs_lured() and Util.get_player().trap_needs_lure) or all_cogs_trapped()):
-				button.disable()
+			if ui_root.is_in_battle():
+				if Util.get_player().stats.gag_balance[track.track_name] < price:
+					button.disable()
+				elif (gag is GagLure) and all_cogs_lured():
+					button.disable()
+				elif (gag is GagTrap) and ((all_cogs_lured() and Util.get_player().trap_needs_lure) or all_cogs_trapped()):
+					button.disable()
+				else:
+					button.enable()
 			else:
-				button.enable()
+				button.disable()
 		else:
 			gag_buttons[i].hide()
 	
@@ -125,7 +133,7 @@ func grey_out() -> void:
 		button.hide()
 
 func set_disabled(disabled : bool) -> void:
-	for button : GagButton in gag_buttons:
+	for button: GagButton in gag_buttons:
 		if disabled:
 			button.disable()
 		else:

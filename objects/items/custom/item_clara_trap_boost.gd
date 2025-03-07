@@ -36,8 +36,7 @@ func get_current_battle() -> BattleManager:
 	return null
 
 func battle_started(battle: BattleManager) -> void:
-	var battle_ui: BattleUI = battle.battle_ui
-	battle_ui.s_turn_complete.connect(scan_gags)
+	Util.get_player().battle_ui.s_turn_complete.connect(scan_gags)
 
 func scan_gags(gags: Array[ToonAttack]) -> void:
 	for gag in gags:

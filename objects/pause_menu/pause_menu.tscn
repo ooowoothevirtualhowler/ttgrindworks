@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://gpi3rtcvtk4r"]
+[gd_scene load_steps=33 format=3 uid="uid://gpi3rtcvtk4r"]
 
 [ext_resource type="Script" uid="uid://b2dsu58yfd5a7" path="res://objects/pause_menu/pause_menu.gd" id="1_0r2dl"]
 [ext_resource type="FontFile" uid="uid://cup2yr5w7or1l" path="res://fonts/Minnie.TTF" id="1_nhuu3"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://ddcktpjy3gdew" path="res://ui_assets/misc/uiAccessoryDelete_up.png" id="6_2ls0o"]
 [ext_resource type="Texture2D" uid="uid://b7ri5sq021cvo" path="res://ui_assets/misc/uiAccessoryDelete_down.png" id="7_pio3r"]
 [ext_resource type="Texture2D" uid="uid://dn8vndd37lqom" path="res://ui_assets/misc/uiAccessoryDelete_rollover.png" id="8_l83vw"]
+[ext_resource type="PackedScene" uid="uid://85lbg5hd54yc" path="res://objects/general_ui/scroll_button/scroll_button.tscn" id="8_ohjf4"]
 [ext_resource type="Texture2D" uid="uid://tyjutuxwdlop" path="res://ui_assets/quests/gear2.png" id="10_lmpwx"]
 [ext_resource type="PackedScene" uid="uid://bwnrw7jcf01kq" path="res://objects/general_ui/node_viewer/node_viewer.tscn" id="13_6fvpv"]
 [ext_resource type="Texture2D" uid="uid://dp60mor8isqvc" path="res://ui_assets/battle/gags/tt_t_gui_bat_pass.png" id="13_vloq5"]
@@ -487,6 +488,13 @@ hover_db_offset = 6.0
 press_db_offset = 0.0
 text = "Quit"
 
+[node name="PageSelector" parent="BackdropHolder/Backdrop/Buttons" instance=ExtResource("8_ohjf4")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+stretch_mode = 4
+options = Array[String](["General", "Gags"])
+
 [node name="VersionLabel" type="Label" parent="BackdropHolder/Backdrop"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -503,6 +511,7 @@ text = "v1.0"
 label_settings = SubResource("LabelSettings_khjnh")
 
 [node name="FloorMainHolder" type="Control" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -564,6 +573,7 @@ theme_override_constants/separation = 6
 alignment = 1
 
 [node name="Quests" type="Control" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 0
 offset_left = 22.0
@@ -634,6 +644,7 @@ grow_vertical = 0
 scale = Vector2(1e-05, 1e-05)
 
 [node name="StatsHolder" type="Control" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -716,6 +727,7 @@ label_settings = SubResource("LabelSettings_7el0f")
 vertical_alignment = 1
 
 [node name="RewardHolder" type="Control" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -790,6 +802,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="ItemDisplay" parent="ItemHolder" instance=ExtResource("14_0372c")]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(128, 68)
 layout_mode = 1
 offset_top = -148.0
@@ -797,9 +810,9 @@ offset_bottom = -80.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_gpmgs")
+&"": SubResource("AnimationLibrary_gpmgs")
 }
 
-[connection signal="pressed" from="BackdropHolder/Backdrop/Buttons/Resume" to="." method="resume"]
+[connection signal="pressed" from="BackdropHolder/Backdrop/Buttons/Resume" to="." method="close"]
 [connection signal="pressed" from="BackdropHolder/Backdrop/Buttons/Settings" to="." method="open_settings"]
 [connection signal="pressed" from="BackdropHolder/Backdrop/Buttons/Quit" to="." method="quit"]

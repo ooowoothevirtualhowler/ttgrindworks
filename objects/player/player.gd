@@ -22,6 +22,8 @@ enum PlayerState {
 ## Preloads
 const SFX_WALK := preload('res://audio/sfx/toon/AV_footstep_walkloop.ogg')
 const SFX_RUN := preload('res://audio/sfx/toon/AV_footstep_runloop.ogg')
+const SFX_OOF := preload('res://audio/sfx/toon/MG_cannon_hit_dirt.ogg')
+const BATTLE_UI = preload('res://objects/battle/battle_ui/battle_ui.tscn')
 const DEBUG_COLLISION_PRINT := false
 
 ## Exports
@@ -55,6 +57,8 @@ const DEBUG_COLLISION_PRINT := false
 @onready var boost_queue: BoostQueue = %BoostTextQueue
 @onready var game_timer: Control = $GameTimer
 var game_timer_tick := true
+var pause_menu: Control
+var battle_ui: BattleUI
 
 ## Misc.
 var run_speed := 8.0
@@ -127,6 +131,8 @@ func _ready() -> void:
 	
 	# Hook up stats
 	connect_stats()
+	
+	battle_ui = BATTLE_UI.instantiate()
 
 func _physics_process(delta: float) -> void:
 	if state == PlayerState.WALK:
@@ -251,9 +257,14 @@ func _physics_process_walk(delta: float) -> void:
 	if global_position.y < DEATH_THRESHOLD:
 		s_fell_out_of_world.emit(self)
 	
-	if Input.is_action_just_pressed("pause"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		get_tree().get_root().add_child(load(PAUSE_MENU).instantiate())
+	if Input.is_action_just_pressed('pause'):
+		if not is_instance_valid(pause_menu):
+			pause_menu = load(PAUSE_MENU).instantiate()
+			get_tree().get_root().add_child(pause_menu)
+		
+		if not pause_menu.is_visible_in_tree():
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			pause_menu.open()
 	
 	if Input.is_action_just_pressed('toggle_freecam') and SaveFileService.settings_file.dev_tools:
 		var cam := PlayerFreeCam.new(self)
@@ -332,6 +343,9 @@ func lose():
 	if state == PlayerState.SAD:
 		# Thog don't care if we're already in the sad state
 		return
+		
+	battle_ui.queue_free()
+	pause_menu.queue_free()
 
 	state = PlayerState.SAD
 	Util.stuck_lock = false
@@ -365,7 +379,7 @@ func fall_in(set_to_walk := false) -> void:
 	var fall_tween := create_tween()
 	fall_tween.tween_property(toon, 'position:y', 0.0, 0.5)
 	await fall_tween.finished
-	AudioManager.play_sound(load("res://audio/sfx/toon/MG_cannon_hit_dirt.ogg"))
+	AudioManager.play_sound(SFX_OOF)
 	await animator.animation_finished
 	fall_tween.kill()
 	if set_to_walk:

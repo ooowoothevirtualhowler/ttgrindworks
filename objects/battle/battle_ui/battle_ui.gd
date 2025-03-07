@@ -8,6 +8,7 @@ class_name BattleUI
 @onready var cog_panels := %CogPanels
 @onready var main_container := %BattleMenuContainer
 @onready var gag_order_menu := %SelectedGags
+@onready var item_panel := %ItemPanel
 
 # Bottom-right buttons
 @onready var fire_button := %Fire
@@ -34,9 +35,6 @@ var selected_gags: Array[ToonAttack] = []
 var fire_action: ToonAttackFire
 
 func _ready():
-	refresh_turns()
-	reset()
-	
 	# Create fire action
 	fire_action = ToonAttackFire.new()
 	fire_action.target_type = BattleAction.ActionTarget.ENEMY
@@ -47,6 +45,9 @@ func _ready():
 	status_container.target = Util.get_player()
 
 func gag_selected(gag: BattleAction) -> void:
+	if not is_in_battle():
+		return
+	
 	if remaining_turns <= 0:
 		s_gag_canceled.emit(gag)
 		complete_turn()
@@ -101,7 +102,7 @@ func gag_selected(gag: BattleAction) -> void:
 
 func refresh_turns():
 	attack_label.set_text("Turns Remaining: " + str(Util.get_player().stats.turns - turn))
-	
+		
 	if remaining_turns == 0:
 		for track in gag_tracks.get_children():
 			track.set_disabled(true)
@@ -110,14 +111,20 @@ func refresh_turns():
 		for track in gag_tracks.get_children():
 			track.set_disabled(false)
 		check_pink_slips()
+		
+func is_in_battle() -> bool:
+	return is_instance_valid(BattleService.ongoing_battle)
 
-func check_fires() -> bool:
+func has_pink_slips() -> bool:
 	return Util.get_player().stats.pink_slips > 0
 
 func gag_hovered(gag: BattleAction):
 	right_panel.preview_gag(gag)
 
 func complete_turn():
+	if not is_in_battle():
+		return
+	
 	# Reset turns
 	turn = 0
 	
@@ -143,9 +150,26 @@ func sort_gags(gags: Array[ToonAttack]) -> Array[ToonAttack]:
 	
 	return gag_order
 
-func reset():
-	show()
-	cog_panels.assign_cogs(get_parent().cogs)
+func reset(show_now: bool = true):
+	refresh_turns()
+	
+	if show_now:
+		show()
+	
+	if is_in_battle():
+		attack_label.show()
+		gag_order_menu.show()
+		%LockIn.set_disabled(false)
+		check_pink_slips()
+		cog_panels.assign_cogs(get_parent().cogs)
+	else:
+		attack_label.hide()
+		gag_order_menu.hide()
+		%LockIn.set_disabled(true)
+		fire_button.disable()
+		
+	item_panel.refresh_items()
+	
 	for track in gag_tracks.get_children():
 		track.refresh()
 	status_container.refresh()
@@ -173,9 +197,10 @@ func get_track_element(track: Track) -> TextureRect:
 	return null
 
 func fire_pressed() -> void:
-	Util.get_player().stats.pink_slips -= 1
-	check_pink_slips()
-	gag_selected(fire_action.duplicate())
+	if is_in_battle():
+		Util.get_player().stats.pink_slips -= 1
+		check_pink_slips()
+		gag_selected(fire_action.duplicate())
 
 func check_pink_slips() -> void:
 	if Util.get_player().stats.pink_slips <= 0:
@@ -193,5 +218,5 @@ func fire_hovered() -> void:
 		gag_hovered(fire_action)
 
 func open_items() -> void:
-	%ItemPanel.show()
+	item_panel.show()
 	main_container.hide()

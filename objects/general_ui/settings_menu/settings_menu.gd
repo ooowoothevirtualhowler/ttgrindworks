@@ -166,8 +166,7 @@ func toggle_intro_skip() -> void:
 # It's for the I'm stuck button
 func cry_for_help() -> void:
 	close()
-	if get_tree().get_root().get_node_or_null('PauseMenu'):
-		get_tree().get_root().get_node('PauseMenu').resume()
+	get_tree().get_root().get_node('PauseMenu').close()
 	if is_instance_valid(Util.floor_manager) and is_instance_valid(Util.player):
 		Util.floor_manager.player_out_of_bounds(Util.get_player())
 

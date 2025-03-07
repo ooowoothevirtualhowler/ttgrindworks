@@ -20,7 +20,6 @@ const CRIT_SFX: Array = [CRIT_SFX_1, CRIT_SFX_2, CRIT_SFX_3, CRIT_SFX_4]
 var player = Util.get_player()
 var cogs: Array[Cog]
 var battle_node: BattleNode
-var battle_ui: BattleUI
 var round_actions: Array[BattleAction] = []
 var round_end_actions : Array[BattleAction] = []
 var current_action: BattleAction
@@ -56,7 +55,7 @@ func start_battle(cog_array: Array[Cog], battlenode: BattleNode):
 	cogs = cog_array
 	battle_node = battlenode
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	battle_ui.s_turn_complete.connect(gags_selected)
+	player.battle_ui.s_turn_complete.connect(gags_selected)
 	
 	# Record the base stats for all combatants
 	battle_stats[Util.get_player()] = Util.get_player().stats.duplicate(true)
@@ -77,8 +76,12 @@ func start_battle(cog_array: Array[Cog], battlenode: BattleNode):
 	
 	BattleService.battle_started(self)
 	
-	# UI must be added last
-	add_child(battle_ui)
+	# UI must be added last.
+	if player.battle_ui.get_parent():
+		# Detach it from the pause menu if it's there.
+		player.battle_ui.get_parent().remove_child(player.battle_ui)
+	add_child(player.battle_ui)
+	player.battle_ui.reset()
 	s_ui_initialized.emit()
 
 func append_action(action: BattleAction):
@@ -99,7 +102,7 @@ func revert_battle_speed() -> void:
 
 func begin_turn():
 	# Hide Battle UI
-	battle_ui.hide()
+	player.battle_ui.hide()
 	apply_battle_speed()
 	current_round += 1
 	# Inject partner moves before player's
@@ -218,9 +221,9 @@ func round_over():
 	else:
 		s_round_ended.emit()
 		s_focus_char.emit(battle_node)
-		if Util.get_player() and Util.get_player().stats.hp > 0:
-			# Stop showing up when i'm dead!!!!
-			battle_ui.reset()
+		if is_instance_valid(player) and player.stats.hp > 0:
+			# Reset because the next turn is about to start.
+			player.battle_ui.reset()
 			round_actions = []
 			battle_node.reposition_cogs()
 			has_moved.clear()

@@ -1,10 +1,7 @@
 extends Area3D
 class_name BattleNode
 
-#const COGVERSATION_PLAYER = preload("res://objects/cog/cogversations/cogversation_player.tscn")
 const BATTLE_MANAGER = preload("res://objects/battle/battle_manager/battle_manager.tscn")
-# Somehow preloading this is a cyclical reference i wish i was joking
-const BATTLE_UI := "res://objects/battle/battle_ui/battle_ui.tscn"
 const COG_DISTANCE := 2.25
 
 # Object state
@@ -56,9 +53,6 @@ func body_entered(body: Node3D):
 
 func player_entered(player : Player):
 	s_battle_initialized.emit()
-	
-	# Start loading the battle UI
-	ResourceLoader.load_threaded_request(BATTLE_UI)
 	
 	# Free the mouse
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -144,7 +138,6 @@ func player_entered(player : Player):
 	var bm = BATTLE_MANAGER.instantiate()
 	add_child(bm)
 	bm.boss_battle = boss_battle
-	bm.battle_ui = ResourceLoader.load_threaded_get(BATTLE_UI).instantiate()
 	bm.start_battle(cogs,self)
 	bm.s_focus_char.connect(focus_character)
 	
@@ -158,6 +151,8 @@ func player_entered(player : Player):
 	bm.s_battle_ended.connect(
 		func():
 			s_battle_end.emit()
+			# Detach it so it doesn't get deleted.
+			bm.remove_child(player.battle_ui)
 			queue_free()
 	)
 

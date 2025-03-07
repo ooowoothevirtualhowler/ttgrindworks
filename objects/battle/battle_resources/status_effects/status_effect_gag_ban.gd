@@ -15,7 +15,7 @@ var tween_storage := {}
 var track_elements: Array[TrackElement]:
 	get: 
 		var arr: Array[TrackElement] = []
-		arr.assign(manager.battle_ui.gag_tracks.get_children())
+		arr.assign(Util.get_player().battle_ui.gag_tracks.get_children())
 		return arr
 
 func apply() -> void:

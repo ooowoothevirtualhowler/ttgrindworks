@@ -16,7 +16,7 @@ func setup() -> void:
 
 func battle_start(battle: BattleManager) -> void:
 	await battle.s_ui_initialized
-	var ui: BattleUI = battle.battle_ui
+	var ui: BattleUI = Util.get_player().battle_ui
 	battle.s_round_ended.connect(on_round_start.bind(ui))
 	ui.s_turn_complete.connect(on_turn_finalized)
 	on_round_start(ui)

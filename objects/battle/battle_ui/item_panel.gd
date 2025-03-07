@@ -25,6 +25,10 @@ func _ready() -> void:
 	_ready_vouchers()
 	_ready_toonup()
 
+func refresh_items() -> void:
+	_refresh_vouchers()
+	_refresh_toonup()
+
 #region GAG VOUCHERS
 @export_category('Gag Vouchers')
 @export var point_label_settings: LabelSettings
@@ -52,14 +56,18 @@ func get_voucher_counts() -> Dictionary:
 func create_new_voucher(track: Track, count: int) -> Control:
 	var button_copy := voucher_template.duplicate()
 	button_copy.show()
-	button_copy.get_node('GagSprite').texture_normal = track.gags[0].icon
+	var gag_sprite := button_copy.get_node('GagSprite')
+	gag_sprite.texture_normal = track.gags[0].icon
 	button_copy.get_node('TrackName').set_text(track.track_name)
 	button_copy.get_node('Quantity').set_text("x%d" % count)
-	button_copy.get_node('GagSprite').set_disabled(count == 0)
-	button_copy.get_node('GagSprite').pressed.connect(use_voucher.bind(track))
-	button_copy.get_node('GagSprite').mouse_entered.connect(HoverManager.hover.bind("+5 %s points" % track.track_name))
-	button_copy.get_node('GagSprite').mouse_exited.connect(HoverManager.stop_hover)
-	if button_copy.get_node('GagSprite').disabled: button_copy.modulate = Color.GRAY
+	if get_parent().is_in_battle():
+		gag_sprite.set_disabled(count == 0)
+		gag_sprite.pressed.connect(use_voucher.bind(track))
+	else:
+		gag_sprite.set_disabled(true)
+	gag_sprite.mouse_entered.connect(HoverManager.hover.bind("+5 %s points" % track.track_name))
+	gag_sprite.mouse_exited.connect(HoverManager.stop_hover)
+	if gag_sprite.disabled: button_copy.modulate = Color.GRAY
 	return button_copy
 
 func _clear_vouchers() -> void:
@@ -71,14 +79,15 @@ func _refresh_vouchers() -> void:
 	_populate_vouchers()
 
 func use_voucher(track: Track) -> void:
-	Util.get_player().stats.gag_vouchers[track.track_name] -= 1
-	Util.get_player().stats.gag_balance[track.track_name] += 5
-	_refresh_vouchers()
-	for child in get_parent().gag_tracks.get_children():
-		child.refresh()
-	s_voucher_used.emit()
-	var sfx_data: Array = SfxData[track.track_name]
-	AudioManager.play_snippet(sfx_data[0], sfx_data[1])
+	if get_parent().is_in_battle():
+		Util.get_player().stats.gag_vouchers[track.track_name] -= 1
+		Util.get_player().stats.gag_balance[track.track_name] += 5
+		_refresh_vouchers()
+		for child in get_parent().gag_tracks.get_children():
+			child.refresh()
+		s_voucher_used.emit()
+		var sfx_data: Array = SfxData[track.track_name]
+		AudioManager.play_snippet(sfx_data[0], sfx_data[1])
 
 #endregion
 #region Toon-Up
@@ -106,7 +115,8 @@ func get_toonup_counts() -> Dictionary:
 func create_new_toonup(level: int, count: int) -> Control:
 	var button_copy := toonup_template.duplicate()
 	button_copy.show()
-	button_copy.get_node('GagSprite').texture_normal = TOON_UP.gags[level].icon
+	var gag_sprite := button_copy.get_node('GagSprite')
+	gag_sprite.texture_normal = TOON_UP.gags[level].icon
 	var action_name: String
 	if level == 1:
 		# Megaphone is stupid and should be split
@@ -115,11 +125,14 @@ func create_new_toonup(level: int, count: int) -> Control:
 		action_name = TOON_UP.gags[level].action_name.replace(" ", "\n")
 	button_copy.get_node('GagName').set_text(action_name)
 	button_copy.get_node('Quantity').set_text("x%d" % count)
-	button_copy.get_node('GagSprite').set_disabled(count == 0)
-	button_copy.get_node('GagSprite').pressed.connect(use_toonup.bind(level))
-	button_copy.get_node('GagSprite').mouse_entered.connect(HoverManager.hover.bind(TOON_UP.gags[level].custom_description))
-	button_copy.get_node('GagSprite').mouse_exited.connect(HoverManager.stop_hover)
-	if button_copy.get_node('GagSprite').disabled: button_copy.modulate = Color.GRAY
+	if get_parent().is_in_battle():
+		gag_sprite.set_disabled(count == 0)
+		gag_sprite.pressed.connect(use_toonup.bind(level))
+	else:
+		gag_sprite.set_disabled(true)
+	gag_sprite.mouse_entered.connect(HoverManager.hover.bind(TOON_UP.gags[level].custom_description))
+	gag_sprite.mouse_exited.connect(HoverManager.stop_hover)
+	if gag_sprite.disabled: button_copy.modulate = Color.GRAY
 	return button_copy
 
 func _clear_toonup() -> void:
@@ -131,10 +144,11 @@ func _refresh_toonup() -> void:
 	_populate_toonup()
 
 func use_toonup(level: int) -> void:
-	if Util.get_player().stats.toonups[level] > 0:
-		Util.get_player().stats.toonups[level] -= 1
-		TOON_UP.gags[level].apply(Util.get_player())
-		_refresh_toonup()
+	if get_parent().is_in_battle():
+		if Util.get_player().stats.toonups[level] > 0:
+			Util.get_player().stats.toonups[level] -= 1
+			TOON_UP.gags[level].apply(Util.get_player())
+			_refresh_toonup()
 
 #endregion
 
@@ -144,6 +158,6 @@ func get_track(track_name: String) -> Track:
 			return track
 	return null
 
-func _exit() -> void:
+func exit() -> void:
 	hide()
 	get_parent().main_container.show()

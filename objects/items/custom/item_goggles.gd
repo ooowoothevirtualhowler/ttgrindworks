@@ -27,7 +27,7 @@ func on_battle_start(manager: BattleManager) -> void:
 	initialize_ui(manager)
 
 func initialize_ui(manager: BattleManager) -> void:
-	var ui := manager.battle_ui
+	var ui := Util.get_player().battle_ui
 	for element: Control in ui.gag_tracks.get_children():
 		element.s_refreshing.connect(on_track_refresh)
 		element.refresh()
@@ -46,8 +46,9 @@ func on_track_refresh(element: Control) -> void:
 ## Runs the battle timer at the beginning of each round
 func on_round_reset(manager: BattleManager) -> void:
 	timer = Util.run_timer(ROUND_TIME, TIMER_ANCHOR)
-	timer.timer.timeout.connect(on_timeout.bind(manager.battle_ui))
-	timer.reparent(manager.battle_ui)
+	var battle_ui := Util.get_player().battle_ui
+	timer.timer.timeout.connect(on_timeout.bind(battle_ui))
+	timer.reparent(battle_ui)
 	if manager.cogs.size() > 0:
 		AudioManager.play_sound(SFX_TIMER)
 
