@@ -16,7 +16,7 @@ cull_mode = 2
 albedo_texture = ExtResource("4_yrm45")
 roughness = 0.552786
 uv1_scale = Vector3(1, 3, 1)
-uv1_offset = Vector3(0, 0.611111, 0)
+uv1_offset = Vector3(0, 0.67279, 0)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x7sbv"]
 resource_name = "ConveyerBeltV3SHD"
@@ -24,7 +24,7 @@ cull_mode = 2
 albedo_texture = ExtResource("4_yrm45")
 roughness = 0.552786
 uv1_scale = Vector3(1, 3, 1)
-uv1_offset = Vector3(0, -1.16667, 0)
+uv1_offset = Vector3(0, -1.2052, 0)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yrm45"]
 size = Vector3(10.093, 9.67816, 1.0321)
