@@ -35,15 +35,20 @@ static func get_bone(item: ItemAccessory, player: Player) -> BoneAttachment3D:
 func apply_item(player: Player) -> void:
 	super(player)
 	
+	wear_item(player)
+
+# This is a separate function to support swapping.
+# Calling apply_item to swap would reapply the effects.
+func wear_item(player: Player) -> void:
 	if not player.is_node_ready():
 		await player.ready
 	
 	var mod := model.instantiate()
-	var bone := ItemAccessory.get_bone(self,player)
+	var bone := ItemAccessory.get_bone(self, player)
 	for accessory in bone.get_children():
 		accessory.queue_free()
 	bone.add_child(mod)
-	var placement := ItemAccessory.get_placement(self,player.toon.toon_dna)
+	var placement := ItemAccessory.get_placement(self, player.toon.toon_dna)
 	mod.position = placement.position
 	mod.rotation_degrees = placement.rotation
 	mod.scale = placement.scale

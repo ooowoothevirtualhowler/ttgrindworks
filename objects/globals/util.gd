@@ -215,8 +215,11 @@ func resume_player_safe() -> void:
 func barrier(_signal: Signal, timeout: float = 10.0) -> Signal:
 	return SignalBarrier.new([_signal, Task.delay(timeout)], SignalBarrier.BarrierType.ANY).s_complete
 
-func do_item_hover(item: Item) -> void:
+func do_item_hover(item: Item, extra_description: String = '') -> void:
 	var desc: String = item.big_description if Util.get_player().see_descriptions else item.item_description
+	if extra_description:
+		desc += extra_description
+	
 	HoverManager.hover(desc, 18, 0.025, item.item_name, item.shop_category_color.darkened(0.3))
 
 #region Mod Cogs
