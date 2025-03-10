@@ -4,7 +4,14 @@ class_name ItemDisplay
 const HOVER_SFX := preload("res://audio/sfx/ui/GUI_rollover.ogg")
 const CLICK_SFX := preload("res://audio/sfx/ui/Click.ogg")
 
-var click_to_wear_txt := "\n[color=%s]Click to wear.[/color]" % Color.WEB_GREEN.to_html()
+# Text when hovering over a wearable item
+const HOVER_TXT := "\n[color=%s]%s[/color]"
+
+const CLICK_TO_WEAR = "Click to wear."
+var WEAR_COLOR = Color.WEB_GREEN.to_html()
+
+const CLICK_TO_TAKE_OFF = "Click to take off."
+var TAKE_OFF_COLOR = Color.RED.to_html()
 
 @onready var item_container: HBoxContainer = %ItemContainer
 
@@ -38,19 +45,40 @@ func add_new_item(item: Item) -> void:
 	new_tex.mouse_exited.connect(stop_hover.bind(new_tex))
 	item_container.add_child(new_tex)
 
-func hover_item(item: Item, tex_rect: TextureButton) -> void:
-	Util.do_item_hover(item, click_to_wear_txt if item is ItemAccessory else '')
+func _do_hover(item: Item) -> void:
+	var click_to_wear_txt := ''
+	
+	if item is ItemAccessory:
+		click_to_wear_txt = HOVER_TXT
+		
+		if Util.get_player().is_wearing_item(item):
+			click_to_wear_txt = click_to_wear_txt % [TAKE_OFF_COLOR, CLICK_TO_TAKE_OFF]
+		else:
+			click_to_wear_txt = click_to_wear_txt % [WEAR_COLOR, CLICK_TO_WEAR]
+	
+	Util.do_item_hover(item, click_to_wear_txt)
+
+func hover_item(item: Item, tex_btn: TextureButton) -> void:
+	_do_hover(item)
+	
 	Sequence.new([
-		LerpProperty.new(tex_rect, ^"scale", 0.1, Vector2.ONE * 1.15).interp(Tween.EASE_IN_OUT, Tween.TRANS_QUAD),
+		LerpProperty.new(tex_btn, ^"scale", 0.1, Vector2.ONE * 1.15).interp(Tween.EASE_IN_OUT, Tween.TRANS_QUAD),
 	]).as_tween(self)
 	AudioManager.play_sound(HOVER_SFX, 6.0)
 
-func stop_hover(tex_rect: TextureButton) -> void:
+func stop_hover(tex_btn: TextureButton) -> void:
 	HoverManager.stop_hover()
+	
 	Parallel.new([
-		LerpProperty.new(tex_rect, ^"scale", 0.1, Vector2.ONE).interp(Tween.EASE_IN_OUT, Tween.TRANS_QUAD),
+		LerpProperty.new(tex_btn, ^"scale", 0.1, Vector2.ONE).interp(Tween.EASE_IN_OUT, Tween.TRANS_QUAD),
 	]).as_tween(self)
 
 func item_clicked(item: ItemAccessory) -> void:
 	item.wear_item(Util.get_player())
 	AudioManager.play_sound(CLICK_SFX)
+	
+	# Refresh hover text to show different
+	# text based on if we're wearing it
+	# or not.
+	HoverManager.stop_hover()
+	_do_hover(item)

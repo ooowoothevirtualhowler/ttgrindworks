@@ -43,10 +43,19 @@ func wear_item(player: Player) -> void:
 	if not player.is_node_ready():
 		await player.ready
 	
-	var mod := model.instantiate()
 	var bone := ItemAccessory.get_bone(self, player)
+	
 	for accessory in bone.get_children():
 		accessory.queue_free()
+	
+	if player.is_wearing_item(self):
+		# Store that we took it off.
+		player.current_accessories[slot] = ''
+		return
+	
+	player.current_accessories[slot] = item_name
+	
+	var mod := model.instantiate()
 	bone.add_child(mod)
 	var placement := ItemAccessory.get_placement(self, player.toon.toon_dna)
 	mod.position = placement.position

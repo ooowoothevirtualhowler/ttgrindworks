@@ -87,6 +87,14 @@ var better_battle_rewards := false
 var no_negative_anomalies := false
 var throw_heals := true
 var trap_needs_lure := true
+var current_accessories: Dictionary = {
+	Item.ItemSlot.HAT: "",
+	Item.ItemSlot.GLASSES: "",
+	Item.ItemSlot.BACKPACK: ""
+}
+func is_wearing_item(item: ItemAccessory) -> bool:
+	return item.item_name == current_accessories[item.slot]
+
 ## Damage immunity from light-based obstacles, such as spotlights and goon beams.
 var immune_to_light_damage := false
 var laff_lock_enabled := false:
@@ -412,6 +420,12 @@ func connect_stats() -> void:
 		BattleService.s_round_ended.connect(stats.on_round_end)
 	if not BattleService.s_battle_started.is_connected(stats.on_battle_started):
 		BattleService.s_battle_started.connect(stats.on_battle_started)
+	# Update worn accessories when we get a new one.
+	ItemService.s_item_applied.connect(
+		func(item: Item):
+			if item.is_acessory:
+				current_accessories[item.slot] = item.item_name
+	)
 	s_stats_connected.emit(stats)
 
 var prev_hp := -1
