@@ -1,0 +1,28 @@
+{
+	"dependencies": [],
+	"description": "Allows selecting accessories to wear from the pause menu.",
+	"extra": {
+		"godot": {
+			"authors": [],
+			"compatible_game_version": [
+				"1.0.2"
+			],
+			"compatible_mod_loader_version": [
+				"7.0.0"
+			],
+			"config_schema": {
+
+			},
+			"description_rich": "",
+			"image": null,
+			"incompatibilities": [],
+			"load_before": [],
+			"optional_dependencies": [],
+			"tags": []
+		}
+	},
+	"name": "Item_Customization",
+	"namespace": "Ooowoo",
+	"version_number": "1.0.0",
+	"website_url": "https://github.com/ooowoothevirtualhowler/ttgrindworks"
+}
