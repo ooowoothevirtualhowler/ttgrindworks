@@ -24,12 +24,12 @@ func _entered_title_screen(node: Node) -> void:
 func _entered_pause_menu(node: Node) -> void:
 	ModLoaderLog.debug("Pause menu entered", get_parent().MOD_NAME)
 	
-	if not node.is_node_ready():
-		await node.ready
-	
 	_find_and_set_version_label(node)
 
 func _find_and_set_version_label(node: Node) -> void:
+	if not node.is_node_ready():
+		await node.ready
+
 	var version_label := node.find_child("VersionLabel")
 	
 	if version_label:
