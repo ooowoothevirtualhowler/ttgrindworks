@@ -98,6 +98,9 @@ func _ready() -> void:
 	)
 
 func setup_current_accessories() -> void:
+	if not ItemService.is_node_ready():
+		await ItemService.ready
+	
 	# Connect a callback for any new items received
 	# so we can track accessories received.
 	ItemService.s_item_applied.connect(

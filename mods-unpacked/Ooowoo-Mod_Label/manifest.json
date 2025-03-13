@@ -1,6 +1,6 @@
 {
 	"dependencies": [],
-	"description": "Allows selecting accessories to wear from the pause menu.",
+	"description": "Changes the version string to include \"MODDED\" to indicate that the game is running with mods.",
 	"extra": {
 		"godot": {
 			"authors": [
@@ -19,13 +19,11 @@
 			"image": null,
 			"incompatibilities": [],
 			"load_before": [],
-			"optional_dependencies": [
-				"Ooowoo-Mod_Label"
-			],
+			"optional_dependencies": [],
 			"tags": []
 		}
 	},
-	"name": "Item_Customization",
+	"name": "Mod_Label",
 	"namespace": "Ooowoo",
 	"version_number": "1.0.0",
 	"website_url": "https://github.com/ooowoothevirtualhowler/ttgrindworks"
