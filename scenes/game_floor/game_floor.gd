@@ -47,6 +47,8 @@ func _ready() -> void:
 		room_count += 1
 	Util.floor_number += 1
 	generate_floor()
+	if SaveFileService.run_file:
+		SaveFileService.run_file.floor_choice = null
 
 func generate_floor() -> void:
 	if not floor_variant:
@@ -63,6 +65,9 @@ func generate_floor() -> void:
 	# Queue reward:
 	if floor_variant.reward:
 		s_floor_ended.connect(func(): floor_variant.reward.apply_item(Util.get_player()))
+		if floor_variant.discard_item:
+			if not floor_variant.discard_item in ItemService.seen_items:
+				ItemService.seen_item(floor_variant.discard_item)
 	
 	# Set up floor modifiers
 	for modifier in floor_variant.modifiers:
@@ -139,6 +144,7 @@ func generate_floor() -> void:
 	player.face_position(entrance.get_node('EXIT').global_position)
 	if Util.floor_number == 0:
 		player.fall_in(true)
+		player.game_timer_tick = true
 	else:
 		player.teleport_in(true)
 	if Util.window_focused:
